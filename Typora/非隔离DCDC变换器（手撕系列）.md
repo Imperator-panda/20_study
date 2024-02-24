@@ -34,9 +34,13 @@ DC-DC功率变换电路利用能量存储器（<font color = red>电感器</font
 
 主要的非隔离型DCDC变换器分为两类，单电感模型、双电感模型
 
-​                                                                                                                            <span id="三个端子">单电感模型</span>
+​                                                                                                                            <span id="三个端子">单电感模型-三个端子</span>
 
 ![image-20240129104431493](Typora_Png/image-20240129104431493.png)
+
+​                                                                                                                         	<span id="两个端子">*单电感模型-两个端子*</span>
+
+![image-20240130100458637](Typora_Png/image-20240130100458637.png)
 
 电感的公式：<font size=5>$V_L = L\frac{di_L}{dt}$</font>      $\rightarrow$     <font size=5>$\Delta i_L = \frac{1}{L} \int_{0}^{T}V_Ldt$</font>
 
@@ -77,13 +81,66 @@ DC-DC功率变换电路利用能量存储器（<font color = red>电感器</font
 | 类型2 |    0，$V_{out}$     |  $V_in$   |   $0<V_{in}<V_{out}$，Boost    |
 | 类型3 | $V_{in}$，$V_{out}$ |     0     | $V_{out}<0<V_{in}$，Buck-Boost |
 
-​				
+### 2.2 三种基本电路
 
-![image-20240130100458637](Typora_Png/image-20240130100458637.png)
+​				单电感模型如下图示：
 
-​																													<span id="两个端子">两个端子</span>
+![image-20240129104431493](Typora_Png/image-20240129104431493.png)
 
+#### 2.2.1 buck电路（0 < $V_{out}$ < $V_{in}$）
 
+​	根据单电感模型设计：<font color=red>$V_Y$必然介于$V_{X1}$和$V_{X2}$之间，当$0 < V_{out} < V_{in}$ 时</font>![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Snipaste_2024-02-23_13-23-48.png)
 
-<center>三个端子</center>
+开关管有MOSFET、IGBT等，选用开关管进行填充	
 
+![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Buck_Switch.png)
+
+​	只考虑能量单向流动，可以用续流二极管（便宜）代替开关管，根据能量流动分析，只有如下情况符合设计逻辑：![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Buck_二极管.png)
+
+由单电感统一模型的结论$\Rightarrow T_{X1}V_{X1} + T_{X2}V_{X2} = T_YV_Y$    <font color=purple> ($T = T_Y = T_{X1} + T_{X2}$)</font>
+
+对于开关管：$T = T_{on} + Y_{off}$
+
+​						$d = \frac{T_{on}}{T}$
+
+在连续状态下，计算输出电压和输入电压的比例关系：$\Rightarrow T_{X1}V_{X1} + T_{X2}V_{X2} = T_YV_Y$ 
+
+​																							$\Rightarrow dT\cdot V_{in} + 0\cdot \frac{(1 -d)}{T} = V_{out}\cdot T$
+
+​																							$\frac{V_{out}}{V_{in}} = d$
+
+#### 2.2.2 Boost电路（0 < $V_{in}$ < $V_{in}$)
+
+根据单电感模型设计：<font color=red>$V_Y$必然介于$V_{X1}$和$V_{X2}$之间，当$0 < V_{out} < V_{in}$ 时</font>
+
+![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Boost_One.png)
+
+为适应正常情况下左侧输入，右侧输出的看图习惯，并用开关管进行填充：![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Boost_switch.png)
+
+只考虑能量单向流动，可以用续流二极管（便宜）代替开关管，根据能量流动分析，只有如下情况符合设计逻辑：![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Boost-erjiguan.png)
+
+在连续状态下，计算输出电压和输入电压的比例关系：$\Rightarrow T_{X1}V_{X1} + T_{X2}V_{X2} = T_YV_Y$ 
+
+​																							$\Rightarrow V_{in}\cdot T = dT\cdot 0 + (1-d)T\cdot V_{out}$
+
+​																							$\frac{V_{out}}{V_{in}} = \frac{1}{1-d}$
+
+#### 2.2.3 Buck-Boost电路($V_{out} < 0 < V_{in}$)
+
+根据单电感模型设计：<font color=red>$V_Y$必然介于$V_{X1}$和$V_{X2}$之间，当$0 < V_{out} < V_{in}$ 时</font>
+
+![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Buck_Boost.png)
+
+根据看图习惯，改为一边输入，一边输出，并用开关管进行填充：![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\bUCK_bOOSTsWITCH.png)
+
+只考虑能量单向流动，可以用续流二极管（便宜）代替开关管，根据能量流动分析，只有如下情况符合设计逻辑：![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\02231700.png)
+
+在连续状态下，计算输出电压和输入电压的比例关系：$\Rightarrow T_{X1}V_{X1} + T_{X2}V_{X2} = T_YV_Y$ 
+
+​																							$\Rightarrow dT\cdot V_{in} - (1 - d)T\cdot V_{out} = 0$
+
+​																							$\frac{V_{out}}{V_{in}} = \frac{d}{1-d}$
+
+当$d < 0.5$时： $\frac{V_{out}}{V_{in}} < 1$     $\rightarrow$  $V_{out} < V_{in}$   $\rightarrow$ Buck电路
+
+当$d > 0.5$时： $\frac{V_{out}}{V_{in}} > 1$     $\rightarrow$  $V_{out} > V_{in}$   $\rightarrow$ Boost电路
