@@ -89,13 +89,13 @@ DC-DC功率变换电路利用能量存储器（<font color = red>电感器</font
 
 #### 2.2.1 buck电路（0 < $V_{out}$ < $V_{in}$）
 
-​	根据单电感模型设计：<font color=red>$V_Y$必然介于$V_{X1}$和$V_{X2}$之间，当$0 < V_{out} < V_{in}$ 时</font>![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Snipaste_2024-02-23_13-23-48.png)
+​	根据单电感模型设计：<font color=red>$V_Y$必然介于$V_{X1}$和$V_{X2}$之间，当$0 < V_{out} < V_{in}$ 时</font>![](Typora_Png\Snipaste_2024-02-23_13-23-48.png)
 
 开关管有MOSFET、IGBT等，选用开关管进行填充	
 
-![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Buck_Switch.png)
+![](Typora_Png\Buck_Switch.png)
 
-​	只考虑能量单向流动，可以用续流二极管（便宜）代替开关管，根据能量流动分析，只有如下情况符合设计逻辑：![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Buck_二极管.png)
+​	只考虑能量单向流动，可以用续流二极管（便宜）代替开关管，根据能量流动分析，只有如下情况符合设计逻辑：![](Typora_Png\Buck_二极管.png)
 
 由单电感统一模型的结论$\Rightarrow T_{X1}V_{X1} + T_{X2}V_{X2} = T_YV_Y$    <font color=purple> ($T = T_Y = T_{X1} + T_{X2}$)</font>
 
@@ -113,11 +113,11 @@ DC-DC功率变换电路利用能量存储器（<font color = red>电感器</font
 
 根据单电感模型设计：<font color=red>$V_Y$必然介于$V_{X1}$和$V_{X2}$之间，当$0 < V_{out} < V_{in}$ 时</font>
 
-![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Boost_One.png)
+![](Typora_Png\Boost_One.png)
 
-为适应正常情况下左侧输入，右侧输出的看图习惯，并用开关管进行填充：![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Boost_switch.png)
+为适应正常情况下左侧输入，右侧输出的看图习惯，并用开关管进行填充：![](Typora_Png\Boost_switch.png)
 
-只考虑能量单向流动，可以用续流二极管（便宜）代替开关管，根据能量流动分析，只有如下情况符合设计逻辑：![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Boost-erjiguan.png)
+只考虑能量单向流动，可以用续流二极管（便宜）代替开关管，根据能量流动分析，只有如下情况符合设计逻辑：![](Typora_Png\Boost-erjiguan.png)
 
 在连续状态下，计算输出电压和输入电压的比例关系：$\Rightarrow T_{X1}V_{X1} + T_{X2}V_{X2} = T_YV_Y$ 
 
@@ -129,11 +129,11 @@ DC-DC功率变换电路利用能量存储器（<font color = red>电感器</font
 
 根据单电感模型设计：<font color=red>$V_Y$必然介于$V_{X1}$和$V_{X2}$之间，当$0 < V_{out} < V_{in}$ 时</font>
 
-![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\Buck_Boost.png)
+![](Typora_Png\Buck_Boost.png)
 
-根据看图习惯，改为一边输入，一边输出，并用开关管进行填充：![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\bUCK_bOOSTsWITCH.png)
+根据看图习惯，改为一边输入，一边输出，并用开关管进行填充：![](Typora_Png\bUCK_bOOSTsWITCH.png)
 
-只考虑能量单向流动，可以用续流二极管（便宜）代替开关管，根据能量流动分析，只有如下情况符合设计逻辑：![](C:\Users\Administrator\Desktop\jiemi\Typora\Typora_Png\02231700.png)
+只考虑能量单向流动，可以用续流二极管（便宜）代替开关管，根据能量流动分析，只有如下情况符合设计逻辑：![](Typora_Png\02231700.png)
 
 在连续状态下，计算输出电压和输入电压的比例关系：$\Rightarrow T_{X1}V_{X1} + T_{X2}V_{X2} = T_YV_Y$ 
 
@@ -144,3 +144,73 @@ DC-DC功率变换电路利用能量存储器（<font color = red>电感器</font
 当$d < 0.5$时： $\frac{V_{out}}{V_{in}} < 1$     $\rightarrow$  $V_{out} < V_{in}$   $\rightarrow$ Buck电路
 
 当$d > 0.5$时： $\frac{V_{out}}{V_{in}} > 1$     $\rightarrow$  $V_{out} > V_{in}$   $\rightarrow$ Boost电路
+
+## 三、 双电感统一模型
+
+### 3.1 基本理论
+
+​	双电感统一模型实际上就是把两个单电感统一模型相互连接在一起了，怎么将两个电感串联起来还不影响单电感统一模型的结论呢？最终选择用一个电容<font color=red>$C_f$</font>将两个电感隔开。<font color=red>$C_f$</font>上的电流可以突变，但是电压不能突变，正好和电感相反，所以可以通过它调节换态后的电流方向。
+
+​	双电感统一模型的电路图如下：
+
+![](Typora_Png/2024-02-24_15-04-28.png)
+
+​	我们把整体当作两个单电感统一模型来逐一分析：
+
+对于$L_1$：B点相当于[单电感统一模型](#三个端子)的X端，A点相当于Y端，根据单电感统一模型的结论：$T_{x1}V_{x1} + T_{x2}V_{x2} = T_yV_y (T = T_y = Y_{x1} + T_{x2})$
+
+​	对于单电感统一模型，由于电感特性，要保证电感磁通平衡，也就是A端和B端的平均电压要相等。
+
+​				得到$L_1$两端平均电压计算公式：$dT\cdot V_B + (1-d)T\cdot (V_C + V_f) = V_A\cdot T$                                                             
+
+​												       化简得：<span id="1式">$V_A = d\cdot V_B + (1-d)\cdot (V_C + V_f)$</span>                                                       [ <font color=red>1式</font>](#1式)
+
+对于$L_2$：C点相当于[单电感统一模型](#三个端子)的X端，D点相当于Y端，根据单电感统一模型的结论：$T_{x1}V_{x1} + T_{x2}V_{x2} = T_yV_y (T = T_y = Y_{x1} + T_{x2})$
+
+​	对于单电感统一模型，由于电感特性，要保证电感磁通平衡，也就是C端和D端的平均电压要相等。
+
+​				得到$L_2$两端平均电压计算公式：$dT\cdot (V_B - V_f) + (1-d)T\cdot V_C = V_D\cdot T$                                                             
+
+​												       化简得：<span id="2式">$V_D = d\cdot (V_B - V_f) + (1-d)\cdot V_C$</span>                                                       [ <font color=red>2式</font>](#1式)
+
+​	[ <font color=red> 1式</font>](#1式)展开：$V_A = dV_B + V_C + V_f - dV_C - dV_f$
+
+​	[ <font color=red> 2式</font>](#1式)展开：$V_D = dV_B -dV_f + V_C -dV_C$
+
+​	观察后继续化简[<font color=red>1式</font>](#1式)：<span id="3式">$V_A = dV_B - dV_f + V_C - dV_C + V_f$</span>
+
+  [ <font color=red>1式</font>](#1式) - [ <font color=red>2式</font>](#1式)得：<span id="3式">$V_A - V_D = V_f$</span>															                                               							[<font color=red>3式</font>](#3式)
+
+将[<font color=red>3式</font>](#3式)代入[ <font color=red>1式</font>](#1式)或[ <font color=red>2式</font>](#1式)得：$V_A = dV_B + V_C + V_A - V_D -dV_C - dV_A+ dV_D$
+
+​							 			 $dV_A - dV_B = V_C - V_D - dV_C + dV_D$
+
+​					     			   $d(V_A - V_B) = (1-d)V_C - (1 - d)V_D$ 
+
+​				    			得：<span id="4式"> $d(V_A - V_B) = (1 - d)(V_C - V_D)$</span>	                                                                                     [<font color=red>3式</font>](#3式)
+
+接下来就是把$0 、 V_{in} 、 V_{out}$分配到A、B、C、D这四个位置上去，四个位置分配三个电压，意味着肯定有两个点位是相同的，不妨设相同的点位为$V_{x1}$,剩下两个分别是$V_{x2}、V_{x3}$,在分配时要注意以下几点：
+
+1. A点 $\neq$ B点
+2. C点 $\neq$ D点
+3. A点 $\neq$ D点
+
+> 具体原因如下：
+>
+> 1. A点 $\neq$ B点
+>
+>    将$L_1$当作一个单电感统一模型分析，A点相当于Y端，B点相当于X端，根据电感磁通平衡条件可知$V_A = d\cdot V_B + (1-d)\cdot (V_C + V_f)$
+>
+>    ​	若$V_A = V_B$，意味着$d = 1$，此时明显不符合电感磁通平衡条件，所以说A点 $\neq$ B点。
+
+
+
+|    A     |  B   |  C   |  D   |
+| :------: | :--: | :--: | :--: |
+| $V_{X1}$ |      |      |      |
+|          |      |      |      |
+|          |      |      |      |
+|          |      |      |      |
+|          |      |      |      |
+
+1. 
