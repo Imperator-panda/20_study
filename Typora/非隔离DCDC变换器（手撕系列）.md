@@ -331,14 +331,96 @@ DC-DC功率变换电路利用能量存储器（<font color = red>电感器</font
 
 开关导通：
 
-​				二极管承受的电压				$\rightarrow V_{in} - V_f = V_{in} - (0 - V_{out} = V_{in} + V_{out})$
+​				二极管承受的电压				$\rightarrow V_{in} - V_f = V_{in} - (0 - V_{out}) = V_{in} + V_{out}$
 
 <img src="Typora_Png/2024-03-01_20-05-58.png" style="zoom:50%;" />
 
 开关断开：
 
-​				开关管承受的电压				$\rightarrow V_{in} - V_f = V_{in} - (0 - V_{out} = V_{in} + V_{out})$
+​				开关管承受的电压				$\rightarrow V_{in} - V_f = V_{in} - (0 - V_{out}) = V_{in} + V_{out}$
 
 <img src="Typora_Png/2024-03-01_20-11-48.png" style="zoom:50%;" />
 
 电感和二极管选取时，电压和电流都要预留1.5-2倍得余量，以防止过流。电流的选择是电路峰值电流得1.5-2倍。
+
+#### 3.2.2 SEPIC电路
+
+![](Typora_Png/2024-03-11_17-13-49.png)
+
+将SEPIC电路的电位填补到双电感统一模型中去，电路模型如下：
+
+![](Typora_Png/2024-03-11_17-21-16.png)
+
+为更直观的分析电路，将输出变为负载，再根据输入侧在左、输出侧在右的形式变换电路图：
+
+因一般把可控开关作用的时间和周期的比值取占空比，此时根据电流流向分析，$V_c$点的开关是可控的d，所以$V_b$就是$1-d$，由于双电感统一模型是关于电容$C_f$对称的，所以说反一下也没有问题。![](Typora_Png/2024-03-11_17-43-06.png)
+
+根据电源侧能量流动情况来分析开关的方向，利用续流二极管代替其中一个开关管(降本增效)，用开关管和续流二极管填充：
+
+![image-20240311175328838](Typora_Png/image-20240311175328838.png)
+
+**电流流动情况分析：**
+
+​	开关管闭合时：由电流的方向可知，此时输出侧是没有电流流过的。
+
+​	开关管承受的电压：$V_{in} + V_{out}$
+
+
+
+ >电容的特性是隔直通交，此时电容上没有电流流过，电容呈现左正右负的电压特性，通过开关管和电感$L_1$形成闭合的回路。从这里也可看出输出端无电流。
+
+![image-20240311175821869](Typora_Png/image-20240311175821869.png)
+
+​	开关管断开时：由电流方向可知，此时输出$V_out$是有电流产生的。
+
+> 之前开关管闭合时，给电容充电，当开关管断开时，输入$Y_{in}$和电感$L_2$给$V_f$充电，且当电源向输出释放能量，$L_1$也向负载输出能量。
+
+![image-20240311211403603](Typora_Png/image-20240311211403603.png)
+
+由以上分析可知，SEPIC电路的输出也是不连续的，但是输入的电流是经过电感的脉动比较小。
+
+**输出比例关系推导**
+
+在连续状态下，计算输出电压和输入电压的比例关系：$\Rightarrow d\cdot (V_C - V_D) = (1-d)(V_A - V_B)$
+
+​													  代入实际的点位关系：$\Rightarrow d\cdot (0 - V_{in}) = (1 -d)(0 - V_{out})$
+
+​																							$\Rightarrow \frac{V_{out}}{V_{in}} = \frac{d}{1-d}$	       <font color=red>Buck-Boost电路</font>
+
+当$d < 0.5$时： $\frac{V_{out}}{V_{in}} < 1$     $\rightarrow$  $V_{out} < V_{in}$   $\rightarrow$ Buck电路
+
+当$d > 0.5$时： $\frac{V_{out}}{V_{in}} > 1$     $\rightarrow$  $V_{out} > V_{in}$   $\rightarrow$ Boost电路
+
+注：SEPIC是Buck-Boost电路，且输入电流连续，输出电流不连续，所以输入好滤波，输出不好滤波，且输出电压是正极性。
+
+**输出极性分析**
+
+> 方式一、	由输出与输入电压比例关系：<font color=red>$\frac{V_{out}}{V_{in}} = \frac{1}{1-d}$</font>
+>
+> ​									得到$\Rightarrow V_{out}与V_{in}$同向
+>
+> 方式二、利用$V_{out}$的输出范围分析
+>
+> ​	由单电感统一模型可知：<font color=#FF44FF>$V_Y$必然介于$V_{X1}$和$V_{X2}$</font>
+>
+> ​	对于$L_2$:<font color=#FF44FF>$0 < V_{in} < (V_f - V_{out})$</font> 
+>
+> ​			又：<font color=#FF44FF>$v_f = V_{A} - V_D$</font>                                     ZETA电路的$V_A = 0$
+>
+> ​			则：<font color = #FF44FF>$0 < V_{in} < V_{out} - V_{in}$</font>
+>
+> ​			一般情况下，<font color=#FF44FF>$V_{in} > 0$</font>,那么必然<font color=#FF44FF>$V_{out} > 0$</font>，$V_{in}$与$V_{out}$同向。而且$V_{out}$既可以大于$V_{in}$，也可以小于$V_{in}$，所以 此电路为<font color=red>Buck-Boost电路</font>.
+>
+> ​	对于L1：$ V_{out} < 0 <  V_f$
+>
+> ​			又：<font color=#FF44FF>$v_f = V_{A} - V_D$</font>                                     ZETA电路的$V_A = 0$，$V_D = V_{in}$
+>
+> ​			则：<font color=#FF44FF>$V_{out} < 0 < - V_{in}$</font>                                两边同乘以-1得$-V_{out} < 0 < V_{in}$
+>
+> ​			一般情况下，<font color=#FF44FF>$V_{in} > 0$</font>,那么<font color=#FF44FF>$V_{out} > 0$</font>时等式才能成立,故$V_{in}$与$V_{out}$同向。而且$V_{out}$既可以大于$V_{in}$，也可以小于$V_{in}$，所以 此电路为<font color=red>Buck-Boost电路</font>.
+
+#### 3.2.3 Semi-Z INV电路
+
+![image-20240314163935359](Typora_Png/image-20240314163935359.png)
+
+将Semi-Z INV电路的电位填补到双电感统一模型中去，电路模型如下：
