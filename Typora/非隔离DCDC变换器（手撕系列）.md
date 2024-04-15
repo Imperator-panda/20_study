@@ -646,7 +646,7 @@ DC-DC功率变换电路利用能量存储器（<font color = red>电感器</font
 
 ​		代入设计要求，占空比$d = \frac{V_{out}}{V_{in}} = \frac{100V}{400V} = 0.25$时满足设计要求。
 
-​		由电感的公式：<font size=5>$V_L = L\frac{di_L}{dt}$</font>      $\rightarrow$     <font size=5>$\Delta i_L = \frac{1}{L} \int_{0}^{T}V_Ldt$</font>
+​		由电感的公式：<font size=5>$V_L = L\frac{di_L}{dt}$</font>      $\rightarrow$     <span id="电感电流公式1"><font size=5>$\Delta i_L = \frac{1}{L} \int_{0}^{T}V_Ldt$</font></span>                                                  [ <font color=red>电感电流公式1</font>](#电感电流公式1)
 
 ​		根据电感在一个周期内储能过程中电流的纹波情况，可以求出电感的参数为：<font size=6>$L = \frac{V_L \cdot \Delta t}{\Delta i_l}$</font>
 
@@ -660,9 +660,95 @@ DC-DC功率变换电路利用能量存储器（<font color = red>电感器</font
 
 ​		代入数据：$L = \frac{(400V - 100V)(\frac{100V}{400V}\cdot \frac{1}{16000})}{20\%\cdot 20 \cdot 2}  \approx 0.0005859375H$
 
-取电感L大小为0.6mH，计算该参数下临界连续时电流的纹波：$\Delta i_L = \frac{1}{L}\cdot V_L\cdot \Delta t = \frac{(400V-300V)\times 0.25\times 0.0000625}{0.0006} = 7.8152A$
+取电感L大小为0.6mH，计算该参数下临界连续时电流的纹波：$\Delta i_L = \frac{1}{L}\cdot V_L\cdot \Delta t = \frac{V_{in} - V_{out}}{L}\cdot d\cdot T = \frac{(400V-300V)\times 0.25\times 0.0000625}{0.0006} = 7.8152A$
 
 所以电感电流纹波为$\frac{7.8}{2} = 3.9$时为临界连续状态(也意味着电路的最小电流为3.9A)。
+
+### 4.2 输出电容参数计算---理想电容器估算
+
+根据电感特性知，电感电流是由直流和交流分量构成的三角波。假设电感器电流的三角部分能够完全流过电容器，流过电容器的三角波电流产生交流电压，从而在直流输出之上产生纹波分量。电容器两端的交流电压由下式给出：
+
+​                                                     										<font color=red size = 5>$V_{ac} = \frac{1}{C} \cdot \int_{0}^{t}i_C(t) \cdot dt$</font>
+
+式中，$i_c$为电容器电流。电感电流是三角波，利用傅里叶思想将其看为直流分量和交流分量组成，此时只考虑交流分量，在交流电流$i_c$为正期间，交流电压增加，当$i_c$为负时衰减。如下图所示。对$i_c$保持为正期间的电流积分得到$u_ac$的峰-峰值电压：
+
+<img src="Typora_Png/image-20240407194409893.png" alt="image-20240407194409893" style="zoom:30%;" />
+
+​																							<font color=red size=5>$\Delta V_{ac} = \frac{1}{C} \int_{t_1}^{t_2}i_c(\tau)d\tau$</font>
+
+上式右侧的积分对应于电感器电流为正部分和时间轴包围而成的三角形的面漆，利用$|t_2 - t_1| = \frac{T_s}{2}$计算阴影三角形的面积，于是：
+
+​                                                                                           <font color=red size=5>$\Delta V_{ac} = \frac{1}{C}\cdot (\frac{1}{2})(\frac{1}{2}\Delta i_L)(\frac{1}{2}T_s)$</font>
+
+代入 [ <font color=red>电感电流公式1</font>](#电感电流公式1)得：                      <font color=red>$\Delta V_{ac} = \frac{1}{8C}\cdot \Delta i_L\cdot T = \frac{1}{8C}\cdot \frac{V_{in}-V_{out}}{L} dT\cdot T = \frac{V_{in}-V_{out}}{8CL}dT^{2} = \frac{V_{out}}{8CL}(1 - d)T^{2}$</font>
+
+变形得：$C = \frac{V_{out}}{8\Delta V_{ac}L}(1-d)T^2$       因为$\Delta V_{ac}$要小于1%
+
+代入数据得：$C > \frac{100V}{8\times 2\times 100V\times 0.01\times 0.0006}\times 0.75\times 0.0000625^2 \approx 0.000030418F \approx 30uF$
+
+## 五、平均等效模型
+
+### 5.1 电容和电感的平均模型
+
+**基本思想：**忽略一些次要的因素，保留系统的主要行为，以简化模型。这里忽略的是开关频率分量，主要保留原始信号的低频部分，取一个平均的概念。
+
+#### 5.1.1 模型角度分析
+
+电力电子变换器工作在开关状态，电路结构也随着开关状态的切换而变化，因此建模较为困难。为了简化分析，忽略开关过程，使用电气量在一个开关周期内的平均替代其实际值进行建模，即对各电气量均取开关周期平均算子：
+
+​                                                                                     <font color=red>$<x(t)>_{T_s} = \frac{1}{T_s}\int_{t - T_s}^{t}x(\tau)d\tau$</font>
+
+以Buck变换器电感电流为例，在启动后至进入稳态工作前，滤波电感电流从零开始增大，输出电容从电压为零开始充电，直至达到稳态输出：
+
+> PS：稳态时电感电压满足伏秒平衡
+
+![img](https://pic1.zhimg.com/v2-58a778bda9b4a4778189b79a1f416604_r.jpg)
+
+对电感电流取开关周期平均：![img](https://pic2.zhimg.com/v2-322330781d99edbb5afb7743dda9b8ad_r.jpg)
+
+可以看出，引入开关周期平均算子后电感电流的高频纹波被忽略，只保留了低频分量，而这正是我们所期望的，因为相比于开关频率，控制器输入的是一个低频调制信号 $V_c(t)$ ，输出$V(t)$也随之低频变化，其中的高频纹波是我们所不关心的。
+
+![img](https://pic1.zhimg.com/80/v2-a8167a443954f5588390413e46edb90c_720w.webp)
+
+总结得到电感和电容的平均模型为：
+
+​	电感：$<V_L(t)>_{T_s} = L\frac{d<i(t)>_{T_S}}{dt}$
+
+​	电容：$<i_C(t)>_{T_s} = C\frac{d<V_C(t)>_{T_s}}{dt}$
+
+#### 5.1.2 数学角度分析
+
+![image-20240415140636861](Typora_Png/image-20240415140636861.png)
+
+### 5.2 采用平均模型分析单电感DCDC变换器等效框图
+
+​	**基本套路：**得到电感和负载侧滤波电容的平均时域数学模型，从而经过拉氏变换得到输出电压和输入电压的关系，即传递函数，然后画出电路的等效框图，惊醒控制器的设计。（这里没有考虑扰动的影响，后面再做分析。）
+
+#### 5.2.1 Buck电路等效框图
+
+![image-20240415151202473](Typora_Png/image-20240415151202473.png)
+
+要建立数学模型，肯定要基于电路的基本定理去列计算方程式，首先分析开关切换时的状态，在开关切换时可以等效城下面这个电流图：![image-20240415152350999](Typora_Png/image-20240415152350999.png)
+
+图中r表示电感的等效电阻，$V_g$的波形为如下方波：
+
+![image-20240415153303756](Typora_Png/image-20240415153303756.png)
+
+由电路的平均模型可得到下式，也就是$V_g$中的直流分量为$dV_{in}$:
+
+​																	$<V_g(t)>_T = \frac{1}{T}\int_{t}^{t+T}V_g(\tau)d\tau = \frac{1}{T}dT<V_{in}(t)>_T = d<V_{in}(t)>_T$
+
+看Buck电路等效模型，根据KVL定理得到电感和电容平均数学模型：
+
+​																	$<V_g(t)> - <V_o(t)> = d<V_{in}(t)> - <V_o(t)>$
+
+​																					    						$=r\cdot <i_L(t)> + L\frac{d<i_L(t)>}{dt}$
+
+看Buck电路等效模型，根据KCL定理得到电感和电容平均数学模型：
+
+​																	$<i_L(t)> = C_o\frac{d<V_o(t)>}{dt} + \frac{<V_o(t)>}{R}$
+
+进行拉氏变换，则可得到他们的频域模型为：
 
 
 
