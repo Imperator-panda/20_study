@@ -30,7 +30,181 @@ $$
 
 >注意：
 >$$
->{\color{red}{截止频率：f_c =\frac{1}{2\pi RC} = \frac{{\omega}_c}{2 \pi} = \frac{1}{2{\pi}{\tau}}}} \tag{截止频率转换}
+>\begin{align*}
+>截止频率：&{\color{red}{f_c =\frac{1}{2\pi RC} = \frac{{\omega}_c}{2 \pi} = \frac{1}{2{\pi}{\tau}}}} \tag{截止频率转换}\\
+>&{\color{red}{\tau = RC}}
+>\end{align*}
 >$$
 >
+
+$$
+离散化一般采用=\left\{
+\begin{align*}
+1、 & 后向差分法 \rightarrow \quad S = \frac{1 - Z^{-1}}{T_s} \\
+2、 & 前向差分法 \rightarrow \quad S = \frac{Z - 1}{T_s}  \\
+3、 & 双线性差分法\rightarrow S = \frac{2}{T_s}\frac{1 - Z^{-1}}{1 +Z^{-1}}
+\end{align*}
+\right.
+$$
+
+## 1、后向差分法
+
+令$\displaystyle S = \frac{1 - Z^{-1}}{T_s}$，代入$\displaystyle G(s) = \frac{Y(s)}{X(s)} = \frac{{\omega}_c}{s + {\omega}_c}$
+$$
+\begin{align*}
+得到:&\frac{Y(z)}{X(z)} = \frac{{\omega}_c}{\frac{1 - Z^{-1}}{T_s} +{\omega}_c} \quad  \quad \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad  \\
+通分:&\frac{Y(z)}{X(z)} = \frac{{\omega}_cT_s}{1 - Z^{-1} + {\omega}_cT_s}  \\
+展开:&T_s{\omega}_cX(z) = (1 + {\omega}_cT_s)Y(z) - Y(z)Z^{-1}   \\
+移项:&(1 + {\omega}_cT_s)Y(z) = T_s{\omega}_cX(z) + Y(z)Z^{-1}   \\
+为了消&除(1 + {\omega}_C)并将其化简的更简洁,等式右边引入：  \\
+&{\color{blue}{\omega}_c{T_s}Y(z)Z^{-1}-{\omega}_c{T_s}Y(z)Z^{-1}}   \\
+\rightarrow &(1 + {\omega}_c{T_s})Y(z) = T{\omega}_cX(z) + (1 + {\omega}_c{T_s})Y(z)Z^{-1} -T_s{\omega}_c Y(z)Z^{-1}  \\
+\rightarrow&(1 + {\omega}_c{T_s})Y(z) = T_s{\omega}_c(X(z) - Y(z)Z^{-1}) + (1 + {\omega}_cT_s)Y(z)Z^{-1}   \\
+两边同&时除以：1 + T_s{\omega}_c     \\
+&Y(z) = \frac{T_s{\omega}_c}{1 + T_s{\omega}_c}\cdot (X(z) - Y(z)Z^{-1}) + Y(z)Z^{-1}   \\
+\end{align*}
+$$
+
+$$
+引入离散采样数据:\left\{
+\begin{align*}
+1、 & 上一时刻 \rightarrow \quad Y(z)Z^{-1}  = y(n - 1) \\
+2、 & 当前时刻 \rightarrow \quad Y(z)X^0 = y(n)  \\
+3、 & 下一时刻 \rightarrow \quad Y(z)Z^1 = y(n + 1)    \rightarrow未使用
+ \end{align*}
+\right.
+$$
+
+得到：
+$$
+\begin{align*}
+y(n) = y(n - 1) + \frac{T_s{\omega}_c}{(1 + T_s{\omega}_c)}[x(n) - y(n -1)]
+\end{align*}
+$$
+程序中通常使用：
+$$
+\begin{align*}
+y(n) = \frac{T_s{\omega}_c}{(1 + T_s{\omega}_c)}x(n) + (1 - \frac{T_s{\omega}_c}{(1 + T_s{\omega}_c)})y(n - 1)
+\end{align*}
+$$
+程序中通常会算出两个变量：
+$$
+\begin{align}
+&{\color{red}{A = \frac{T_s{\omega}_c}{(1 + T_s{\omega}_c)}}} \tag{}  \\
+\label{eq公式1.1.1-1}&{\color{red}{B  =  1 -A}}   \tag{后向差分公式}   \\
+&{\color{blue}{y(n) = A\cdot x(n) + By(n - 1)}}  \tag{}
+\end{align}
+$$
+
+## 2、双线性差分法
+
+令$\displaystyle S = \frac{2}{T}{\cdot}\frac{1 -Z^{-1}}{1 + Z^{-1}}$,代入$\displaystyle G(s) = \frac{Y(s)}{X(s)} = \frac{{\omega}_c}{s + {\omega}_c}$
+
+得：
+$$
+\begin{align*}
+\frac{Y(z)}{X(z)} = \frac{{\omega}_c}{\frac{2}{T_s}\cdot \frac{1 - Z^{-1}}{1 +Z^{-1}} + {\omega}_c}
+\end{align*}
+$$
+通分：
+$$
+\begin{align*}
+\frac{Y(z)}{X(z)} = \frac{{\omega}_c{T_s(1 + Z^{-1})}}{2(1 - Z^{-1}) + {\omega}_c{T_s{(1 +z^{-1})}}}
+\end{align*}
+$$
+展开：
+$$
+\begin{align*}
+{\omega}_cT_sX(z) + {\omega}_cT_sX(z)Z^{-1} = 2Y(z) - 2Y(z)Z^{-1} + {\omega}_cT_sY(z) + {\omega}_cT_sY(z)Z^{-1}
+\end{align*}
+$$
+移相分配：
+$$
+\begin{align*}
+(2 + {\omega}_cT_s)Y(z) = 2Y(z)Z^{-1} + {\omega}_cT_s(X(z) - Y(z)Z^{-1}) + {\omega}_cT_sX(z)Z^{-1}  \\
+\end{align*}
+$$
+右边引入：$\displaystyle + {\omega}_cT_sY(z)Z^{-1} - {\omega}_cT_sY(z)Z^{-1} $
+$$
+\begin{align*}
+(2 + {\omega}_cT_s)Y(z) = (2 + {\omega}_cT_s)Y(z)Z^{-1} + {\omega}_cT_s[(X(z) - Y(z)Z^{-1}) + (X(z)Z^{-1} - Y(z)Z^{-1})]
+\end{align*}
+$$
+两边同除以$2 + {\omega}_cT_s$:
+$$
+\begin{align*}
+Y(z) = Y(z)Z^{-1} + \frac{{\omega}_cT_s}{2 + {\omega}_cT_s}{\cdot}[(X(z) - Y(z)Z^{-1}) + (X(z)Z^{-1} - Y(z)Z^{-1})]
+\end{align*}
+$$
+
+$$
+引入离散采样数据:\left\{
+\begin{align*}
+1、 & 上一时刻 \rightarrow \quad Y(z)Z^{-1}  = y(n - 1) \\
+2、 & 当前时刻 \rightarrow \quad Y(z)X^0 = y(n)  \\
+3、 & 下一时刻 \rightarrow \quad Y(z)Z^1 = y(n + 1)    \rightarrow未使用
+ \end{align*}
+\right.
+$$
+
+得到：
+$$
+\begin{align*}
+y(n) = y(n - 1) + \frac{{\omega}_cT_s}{2 + {\omega}_cT_s}{\cdot}[(x(n) - y(n - 1)) + (x(n-1) - y(n -1))]
+\end{align*}
+$$
+化简系数:
+$$
+\begin{align*}
+y(n) = (1 - \frac{2{\omega}_cT_s}{2 + {\omega}_cT_s})y(n - 1) + \frac{{\omega}_cT_s}{2 + {\omega}_cT_s}x(n) + \frac{{\omega}_cT_s}{2 + {\omega}_cT_s}x(n - 1)
+\end{align*}
+$$
+程序中通常会算出两个变量：
+$$
+\begin{align}
+&{\color{red}{A = (1 - \frac{2{\omega}_cT_s}{2 + {\omega}_cT_s})}}  \tag{}  \\  
+\label{eq公式1.2.1-1}&{\color{red}{B = \frac{1 - A}{2}}}      \tag{双线性变化差分公式}   \\
+&{\color{blue}{y(n) = Ay(n - 1) + Bx(n - 1) + Bx(n)}}      \tag{}
+\end{align}
+$$
+
+
+我们的代码如下，算出了两个变量：
+
+```C
+#pragma CODE_SECTION(Alg_f32LPFCalc,"ramfuncs")
+float32_t Alg_f32LPFCalc(FILTER_1ST_FRAME_T *RegAddr, float32_t f32DataIn)
+{
+    float32_t f32Out;
+    f32Out = RegAddr->f32PreOut * RegAddr->f32A + RegAddr->f32B * f32DataIn + RegAddr->f32B * RegAddr->f32PreIn;
+    RegAddr->f32PreOut = f32Out;			//这里用的是双线性差分变换的方式做的离散化
+    RegAddr->f32PreIn = f32DataIn;       
+
+    return f32Out;
+}
+
+void Alg_vFilterCoeffUpdate1st(FILTER_1ST_FRAME_T *RegAddrs)
+{
+    float32_t f32Omega;
+    f32Omega = RegAddrs->f32Freq * 2.0f * PAI;
+    RegAddrs->f32A = 1 / (f32Omega * RegAddrs->f32Period + 1);		//这里的系数代入的是后向差分法的系数
+    RegAddrs->f32B = (1 - RegAddrs->f32A) * 0.5;
+}
+```
+
+> 见上述代码所示$y(n) = A * y(n - 1) + B * x(n) + B * x(n - 1)$
+>
+> 理所当然得出：$A = (1 - \frac{2{\omega}_cT_s}{2 + {\omega}_cT_s})$
+>
+> ​				  		$ B = \frac{{\omega}_cT_s}{2 + {\omega}_cT_s}$
+>
+> 于是得到：$A = 1 - 2B$
+>
+> 神奇的是这里他没有采用$$\ref{eq公式1.2.1-1}$$ ，而是选择用$$\ref{eq公式1.1.1-1}$$代入运算，这里表示不理解，但又无可奈何。所以：
+> $$
+> \begin{align*}
+> &{\color{blue}{A = \frac{1}{{\omega}_cT_s + 1}}}  \\
+> &{\color{blue}{B = \frac{1 - A}{2}}}
+> \end{align*}
+> $$
 
