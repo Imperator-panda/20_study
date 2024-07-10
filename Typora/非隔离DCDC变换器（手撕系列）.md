@@ -866,9 +866,47 @@ $$
 $$
 \begin{align*}
 反馈环节传递函数 &= \frac{前向通道传递函数}{1 + 前向通道传递函数\cdot 反馈通道传递函数}  \\
-G(s) &= \frac{}{1 + \frac{1}{Ls+r}\cdot \frac{\frac{1}{Cs}}{1 + \frac{}{\frac{1}{Cs}\cdot \frac{1}{R}}}}
+G(s) &= \frac{\frac{1}{Ls+r}\cdot \frac{\frac{1}{Cs}}{1 + \frac{1}{Cs}\cdot \frac{1}{R}}}{1 + \frac{1}{Ls+r}\cdot \frac{\frac{1}{Cs}}{1 + \frac{1}{Cs}\cdot \frac{1}{R}}}  \\
+&=\frac{\frac{1}{Ls+r}\cdot \frac{R}{RCs+1}}{1+\frac{1}{Ls+r}\cdot \frac{R}{RCs+1}}  \\
+&=\frac{R}{(Ls+r)(CRs+1)+R}  \\
+&=\frac{R}{LCRs^2+Ls+CRrs+R+r}  \\
 \end{align*}
 $$
+
+$$
+传递函数:{\color{red}G(s)=\frac{1}{LCs^2+\frac{L}{R}s+Crs+1+\frac{r}{R}}}
+$$
+
+下面带入我们前面设计和算出的主电路相关参数：
+
+|       参数        |  值   |      |     参数     |        值        |
+| :---------------: | :---: | ---- | :----------: | :--------------: |
+| 输入电压$V_{in}$  | 400V  |      | 电感电流纹波 |  $\leq 20$%(4A)  |
+| 输出电压$V_{out}$ | 100V  |      | 电容电压纹波 | $\leq$1%(4V、1V) |
+|   额定功率$P_o$   |  2KW  |      |  效率$\eta$  |       95%        |
+|   额定电流$I_o$   |  20A  |      |  开关频率f   |       16K        |
+|       电感L       | 0.6mH |      |  输出侧电容  |     47$\mu$F     |
+|     电感电阻r     |   0   |      |  额定负载R   |    5$\Omega$     |
+
+用Mathematica绘制出Bode图：
+
+![image-20240710231345655](Typora_Png/image-20240710231345655.png)
+
+从伯德图和传递函数可以看出，这就是一个二阶振荡系统。如果开环控制对应二阶系统的单位阶跃响应，其表现为欠阻尼状态。
+$$
+传递函数:{\color{red}G(s)=\frac{1}{LCs^2+\frac{L}{R}s+Crs+1+\frac{r}{R}} = \frac{V_o(s)}{DV_{in}(s)}}
+$$
+
+$$
+典型二阶系统：{\color{blue}\Phi(s) = \frac{C(s)}{R(s)} = \frac{\omega_n^2}{S^2+2\zeta\omega_ns+\omega_n^2}}
+$$
+
+对比二阶系统传递函数，我们用Mathematica来求Buck电路开环传递函数的${\color{red}\zeta}$和${\color{red}\omega_n}$:
+
+
+
+
+
 
 
 ### 6.2Buck变换器单电压环比例积分控制详解
@@ -885,7 +923,7 @@ $$
 
 
 
-后面做恒海工会大会的
+
 
 
 
