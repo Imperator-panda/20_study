@@ -1,4 +1,4 @@
-一、能量存储与传输器件
+## 一、能量存储与传输器件
 
 DC-DC功率变换电路利用能量存储器（<font color = red>电感器</font>）件进行滤波，利用能量传输器（<font color = red>电容器</font>）件来传输电能，以改变电压和电流的幅度。
 
@@ -890,13 +890,17 @@ $$
 
 用Mathematica绘制出Bode图：
 
+​                                                                                                                      <span id="6.1.1">开环传递函数Bode图</span>
+
 ![image-20240710231345655](Typora_Png/image-20240710231345655.png)
+
+​                                                                                           
 
 >注：
 >
 >​	<font color=red>通过Bode图，在0Hz处，就表示是在直流频段，幅频响应为0，及表示传递函数的幅值为1，即${\color{red}|V_o(j0)| = |DV_{in}(j0)|}$</font>
 
-从伯德图和传递函数可以看出，这就是一个二阶振荡系统。如果开环控制对应二阶系统的单位阶跃响应，其表现为欠阻尼状态。
+从伯德图和传递函数可以看出，这就是一个二阶振荡系统。开环控制对应二阶系统的单位阶跃响应，其表现为欠阻尼状态。
 $$
 传递函数:{\color{red}G(s)=\frac{1}{LCs^2+\frac{L}{R}s+Crs+1+\frac{r}{R}} = \frac{V_o(s)}{DV_{in}(s)}}
 $$
@@ -911,6 +915,8 @@ $$
 
 由$\zeta$= 0.357295 得知此时的系统为一个振荡系统，下面来看一下它的单位阶跃响应是怎样的？
 
+
+
 > <font color=red>注：
 > </font>
 > 	<font color=red>这里看它的阶跃响应其实就是表示输入为阶跃函数时，看它的输出。阶跃响应不影响函数的动态过程，所以对应Buck电路，传递函数的阶跃响应其实就代表输出。如果开环传递函数的阶跃响应和仿真的输出基本一致及，那么可以认为该传递函数是适用于我们所分析的电路的。</font>
@@ -920,6 +926,8 @@ $$
 > 在此申明：
 >
 > 由于在Mathematica中带入电感电容参数后，值太小了，所以无法得出阶跃响应的函数图，所以后面绘制会借助Matlab来绘制一些函数图像。
+
+> 补充：在经过不懈的努力，终于找到了用Mathematica实现的方法，文档存放在文件夹的Simulation File中，请需要者自己查看。
 
 Matlab绘制图像的一些方法在这里：[Matlab_Vizio＜的博客-CSDN博客](https://blog.csdn.net/weixin_50932441/category_12070067.html)
 
@@ -938,21 +946,65 @@ step(gs*100,0.05)					       %%求阶跃响应
 
 ![untitled](Typora_Png/untitled.png)
 
-6.1.2 仿真分析
+#### 6.1.2 仿真分析
 
+使用PSIM来做电力电子的仿真，在做仿真的过程中遇到的一些问题记录在[PSIM操作做记录](SimulationFile/PSIM操作记录.nb)中，该文件要用Mathematica打开。
 
+![image-20240716153134450](Typora_Png/image-20240716153134450.png)
 
+上面是开环控制的电路图，来看一下输出是什么样子的。
 
+<img src="Typora_Png/image-20240716154758214.png" alt="image-20240716154758214" style="zoom:80%;" />
 
+传递函数的理论分析和电路的仿真是基本对应的，所以说前面的分析方法是可取的，从传递函数看，稳态后对应的应该是直流量，相当于频率为0，即$S = j\omega$
+$$
+\begin{gather*}
+|G(j\omega)| = \frac{1}{\sqrt{(1-\frac{\omega^2}{\omega_n^2})^2+(2\zeta\frac{\omega}{\omega_n})^2}}/\omega \rightarrow 0  \\
+|G(j\omega)|=1   \\
+20Log|G(j\omega)| = 0
+\end{gather*}
+$$
+得到幅频特性，低频时幅值为0，再回看[开环传递函数Bode图](#6.1.1),图在低频段的幅值确实是0，从这里也可以说明前面的分析方法是正确的。
 
+### 6.2 Buck变换器单电压环比例积分控制详解
 
+Buck电路等效模型
+$$
+传递函数:{\color{red}H(s)=\frac{V_o(s)}{DV_{in}(s)}} = \frac{1}{LCs^2+\frac{L}{R}s+Crs+1+\frac{r}{R}}
+$$
+​                                                                                                                      <span id="6.2.1">开环传递函数Bode图</span>
 
+![image-20240710231345655](Typora_Png/image-20240710231345655.png)
 
+#### 6.2.1 开环控制系统与闭环控制系统关系
 
+先来看**开环控制系统（Open Loop Control System）**：其中$U(s)$为系统输入，$X(s)$为系统的输出，传递函数为$G(s)=\frac{X(s)}{U(s)}$
 
-### 6.2Buck变换器单电压环比例积分控制详解
+<img src="Typora_Png/image-20240717161541695.png" alt="image-20240717161541695" style="zoom:80%;" />
 
+引入**闭环控制系统（Close Loop  Control System）**，若将输出$X(s)$反馈到输入端，则可以形成一个不换控制系统：其中$R(s)$是**参考值（Reference）**或目标值，$C(s)$是控制器，将根据误差决定控制量$U(s)$。参考值与输出之间的差$E(s)$称为**误差（Error）**，$E(s) = R(s)-X(s)$。
 
+<img src="Typora_Png/image-20240717162940301.png" alt="image-20240717162940301" style="zoom:80%;" />
+
+根据传递函数的代数性质，可得
+$$
+\begin{align*}
+&X(s) = U(s)\cdot G(s)=E(s)\cdot C(s)\cdot G(s)\\
+将E(s) = R(s)-X(s)代入得  \\
+&X(s) = (R(s)-X(s))\cdot C(s)G(s)  \\
+\Rightarrow &(1+C(s)\cdot G(s))\cdot X(s) = C(s)G(s)R(s)  \\
+\Rightarrow &X(s) = \frac{C(S)G(s)R(s)}{1+C(s)G(s)}
+\end{align*}
+$$
+定义控制系统的**闭环传递函数（Close Loop Transfer Function）**为：
+$$
+\begin{align*}
+G_{cl}(s)&=\frac{X(s)}{R(s)}=\frac{C(s)G(s)}{1+C(s)G(s)}  \\
+反馈环节传递函数 &= \frac{前向通道传递函数}{1 + 前向通道传递函数\cdot 反馈通道传递函数}  \\
+\end{align*}
+$$
+
+> <font color=#FFA042>这里就形成了一个闭环，反馈环节的传递函数就是这么得到的，后面对于反馈控制系统的传递函数可以根据控制系统框图，代入反馈环节传递函数公式直接求出。</font>
 
 如果涉及闭环控制，原来电路的等效传递函数就变为开环传递函数的一部分，那如果想实现对给定直流信号的无静差控制，则需要引入积分控制。
 
@@ -962,7 +1014,7 @@ step(gs*100,0.05)					       %%求阶跃响应
 >
 > ​	<font color=#8600FF>无静差</font>：指反馈系统的被调量（输出量）在系统稳态时等于系统的给定量，误差为0 。
 
-
+引入积分控制，可以使得0Hz处的开环传递函数幅值无穷大，进而闭环传递函数幅值为1，从而实现无静差控制，
 
 
 
@@ -980,5 +1032,8 @@ step(gs*100,0.05)					       %%求阶跃响应
 
 ## 结束
 
+##### 1、[Typora使用技巧 | 各种跳转 【必备】_typora链接跳转到其他文件-CSDN博客](https://blog.csdn.net/qq_41907769/article/details/121722716)
 
+##### 2、[Typora 使用 Markdown 嵌入 LaTeX 数学公式符号语法 - Justrico - 博客园 (cnblogs.com)](https://www.cnblogs.com/justrico/p/11440164.html)
 
+##### 3、[[Latex\]公式编辑，编号、对齐【持】_latex公式编号-CSDN博客](https://blog.csdn.net/panbaoran913/article/details/132773693)
