@@ -223,9 +223,55 @@ void Alg_vBilinearFilterCoeffUpdate1st(FILTER_1ST_FRAME_T *RegAddrs)
 }
 ```
 
+# 二、 PID控制器
+
+[PID算法(1) PID算法的原理推导1_pid控制推导-CSDN博客](https://blog.csdn.net/mayuxin1314/article/details/135217697?spm=1001.2014.3001.5502)
+
+[经典位置式与增量式PID原理 (qq.com)](https://mp.weixin.qq.com/s/gtlW5khINFABqSxHTCMzkg)
+
+[PID算法原理推导及应用 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/704188968)
+
+​		在编程中，Inc和Pos分别表示增量式和位置式的缩写。Inc通常是increment的缩写，表示增加或者递增的意思。Pos通常是position的缩写，表示位置的意思。
+
+## 2.1 什么是PID
+
+​		PID，即**比例Proportion**、**积分Integral**和**微分Derivative**三个单词的缩写。
+
+​		闭环自动控制技术是**基于反馈的概念以减少不确定性**，在闭环自动控制原理中，我们把它叫做“PID控制器”，拿控制电机来说，参考下面模型：
+
+![image-20240820174529765](E:\30_Hub\20_study\Typora\Typora_Png\image-20240820174529765.png)
+
+下面引用一段网上经典的话：
+
+> ​		在工业应用中PID及其衍生算法是应用最广泛的算法之一，是当之无愧的万能算法，如果能够熟练掌握PID算法的设计与实现过程，对于一般的研发人员来讲，应该是足够应对一般研发问题了，而难能可贵的是，在我所接触的控制算法当中，PID控制算法又是最简单，最能体现反馈思想的控制算法，可谓经典中的经典。经典的未必是复杂的，经典的东西常常是简单的，而且是最简单的，想想牛顿的力学三大定律吧，想想爱因斯坦的质能方程吧，何等的简单！简单的不是原始的，简单的也不是落后的，简单到了美的程度。
+
+## 2.2 PID原理
+
+​		常规的模拟 PID 控制系统原理框图如下：
+
+![image-20240820174650500](E:\30_Hub\20_study\Typora\Typora_Png\image-20240820174650500.png)
+
+该系统由模拟 PID 控制器和被控对象组成。
+
+上面框图中， r(t) 是给定值， y(t) 是系统的实际输出值，给定值与实际输出值构成控制偏差e(t) = r(t) − y(t)。
+
+**e(t)** 作为 PID 控制的输入， **u(t)**作为 PID 控制器的输出和被控对象的输入。所以模拟 PID 控制器的控制规律为:
+$$
+\begin{align*}
+u(t) = K_p[e(t) + \frac{1}{T_i}\int^t_{0}e(t)dt+T_d\frac{de(t)}{dt}]
+\end{align*}
+$$
+**三个重要的参数**：
+
+​	**Kp**：控制器的比例系数。
+
+​	**Ti**：控制器的积分时间，也称积分系数。
+
+​	**Td**：控制器的微分时间，也称微分系数。
 
 
-# 二、光伏最大功率点追踪（Maximum Power Point Tracking）
+
+# 三、光伏最大功率点追踪（Maximum Power Point Tracking）
 
 ## 2.1 现有方案
 
